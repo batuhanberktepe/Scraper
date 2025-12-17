@@ -37,7 +37,7 @@ func main() {
 
 	err := chromedp.Run(ctx,
 		chromedp.Navigate(link),
-		chromedp.Sleep(3*time.Second),
+		chromedp.Sleep(30*time.Second),
 		chromedp.OuterHTML("html", &siteHtml),
 		chromedp.Evaluate(`Array.from(document.querySelectorAll('a')).map(a => a.href)`, &linkler),
 		chromedp.FullScreenshot(&ekranGoruntusu, 90),
