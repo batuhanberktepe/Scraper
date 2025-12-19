@@ -23,10 +23,17 @@ func main() {
 	dosyaAdi = strings.ReplaceAll(dosyaAdi, "www.", "")
 	dosyaAdi = strings.ReplaceAll(dosyaAdi, "/", "")
 
-	ctx, cancel := chromedp.NewContext(context.Background())
+	ayarlar := append(chromedp.DefaultExecAllocatorOptions[:],
+		chromedp.UserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"),
+	)
+
+	allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), ayarlar...)
 	defer cancel()
 
-	ctx, cancel = context.WithTimeout(ctx, 30*time.Second)
+	ctx, cancel := chromedp.NewContext(allocCtx)
+	defer cancel()
+
+	ctx, cancel = context.WithTimeout(ctx, 90*time.Second)
 	defer cancel()
 
 	var siteHtml string
@@ -37,7 +44,7 @@ func main() {
 
 	err := chromedp.Run(ctx,
 		chromedp.Navigate(link),
-		chromedp.Sleep(30*time.Second),
+		chromedp.Sleep(5*time.Second),
 		chromedp.OuterHTML("html", &siteHtml),
 		chromedp.Evaluate(`Array.from(document.querySelectorAll('a')).map(a => a.href)`, &linkler),
 		chromedp.FullScreenshot(&ekranGoruntusu, 90),
